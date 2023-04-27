@@ -22,3 +22,20 @@ nm-connection-editor # Открытие настроек сетевого под
 **2. Далее была успешно развёрнута вторая виртуальная машина, с отличным IP-адресом.**
 
 ![img_3.png](img_3.png)
+
+**3. На второй виртуальной машине (которой было присвоено имя «VM02»), было установлено средство управления Saltstack master:**
+
+Bash-скрипт:
+
+```bash
+# Добавление ключа репозитория SaltStack для master
+wget -O - https://repo.saltstack.com/py3/debian/11/amd64/latest/SALTSTACK-GPG-KEY.pub | sudo apt-key add -
+
+#
+echo "deb https://repo.saltstack.com/py3/debian/11/amd64/latest/SALTSTACK-GPG-KEY.pub xenial main" >> /etc/apt/sources.list.d/saltstack.list
+```
+
+**Результат:**
+![img_4.png](img_4.png)
+
+**4. На первой виртуальной машине (VM01) также был добавлен **
