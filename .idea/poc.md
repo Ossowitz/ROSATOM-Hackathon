@@ -2,6 +2,8 @@
 
 **1. Была установлена ОС Astra Linux. Системе было присвоено имя «VM01». Далее были произведены настройки сети: осуществление подключения к внешней сети через соединение с NAT.**
 
+![img_5.png](img_5.png)
+
 1. Bash-скрипт:
 ```bash
 sudo su              # Получение прав администратора
@@ -21,7 +23,7 @@ nm-connection-editor # Открытие настроек сетевого под
 
 **2. Далее была успешно развёрнута вторая виртуальная машина, с отличным IP-адресом.**
 
-![img_3.png](img_3.png)
+![img_7.png](img_7.png)
 
 **3. На второй виртуальной машине (которой было присвоено имя «VM02»), было установлено средство управления Saltstack master:**
 
@@ -31,11 +33,51 @@ Bash-скрипт:
 # Добавление ключа репозитория SaltStack для master
 wget -O - https://repo.saltstack.com/py3/debian/11/amd64/latest/SALTSTACK-GPG-KEY.pub | sudo apt-key add -
 
-#
+# Добавление репозитория SaltStack в нашу систему
 echo "deb https://repo.saltstack.com/py3/debian/11/amd64/latest/SALTSTACK-GPG-KEY.pub xenial main" >> /etc/apt/sources.list.d/saltstack.list
+
+# После добавления репозитория и ключа репозитория
+apt update
+apt install salt-master -y
 ```
 
 **Результат:**
+
 ![img_4.png](img_4.png)
 
-**4. На первой виртуальной машине (VM01) также был добавлен **
+**4. На первой виртуальной машине (VM01) был установлен SaltStack minion.**
+
+Bash-скрипт:
+
+```bash
+# Добавление ключа репозитория SaltStack для master
+wget -O - https://repo.saltstack.com/py3/debian/11/amd64/latest/SALTSTACK-GPG-KEY.pub | sudo apt-key add -
+
+# Добавление репозитория SaltStack в нашу систему
+echo "deb https://repo.saltstack.com/py3/debian/11/amd64/latest/SALTSTACK-GPG-KEY.pub xenial main" >> /etc/apt/sources.list.d/saltstack.list
+
+# После добавления репозитория и ключа репозитория
+apt update
+apt install salt-minion -y 
+```
+
+**5. Была произведена настройка подключения агента SaltStack minion к средству управления SaltStack master.**
+
+Bash-скрипт:
+
+```bash
+# На VM01
+sudo su
+cd /etc/salt/minion.d
+touch tikhomirov.conf
+vi tikhomirov.conf
+
+# Записываем в файл .conf
+master: 192.168.0.155 # 192.168.0.155 - IP-адрес master'а
+master_port: 4506 # 4506 - это тот порт, по которому мастер отдаёт команды для minion's
+
+# Обновление salt-minion для применения конфигурации
+service salt-minion restart
+```
+
+![img_8.png](img_8.png)
