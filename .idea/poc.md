@@ -160,3 +160,57 @@ println(result)
 
 ![img_1222.png](photos%2Fimg_1222.png)
 
+**2. Из-за появления исключения в примере-2, корректность работы скрипта-2 проверить невозможно.**
+
+Листинг программ:
+
+1. Скрипт на Bash:
+
+
+
+```bash
+#!/bin/bash
+
+# Устанавливаем nginx из папки /tmp
+sudo apt-get update
+sudo apt-get install -y nginx
+sudo cp /tmp/nginx.conf /etc/nginx/nginx.conf
+
+# Перезапускаем nginx
+sudo systemctl restart nginx.service
+```
+
+Этот скрипт обновляет список пакетов, устанавливает nginx и копирует конфигурационный файл из `/tmp/nginx.conf` в `/etc/nginx/nginx.conf`. Затем он перезапускает службу nginx, чтобы применить изменения.
+
+2. Скрипт на Groovy:
+
+
+
+```groovy
+import org.yaml.snakeyaml.Yaml
+import com.google.common.collect.ImmutableList
+
+salt = new Salt()
+
+// Получаем список minion
+minions = salt.cmd('*', 'test.ping')
+
+// Формируем параметры для установки Nginx
+nginxParams = [
+        'name': 'nginx',
+        'pkgs': ImmutableList.of('nginx'),
+        'fromrepo': 'nginx',
+        'allow_downgrade': false,
+        'refresh_db': true,
+        'saltenv': 'base',
+        'source': 'salt://nginx/custom_config',
+        'cwd': '/tmp'
+]
+
+// Устанавливаем Nginx на каждом minion
+minions.each { minion ->
+    salt.cmd(minion, 'pkg.install', new Yaml().dump(nginxParams))
+}
+```
+
+В данном примере мы используем библиотеку Salt, чтобы выполнять команды на minion через master. Сначала мы получаем список minion с помощью команды `test.ping`. Затем мы формируем параметры для установки Nginx в виде YAML-структуры и передаем их в команду `pkg.install`. В качестве источника пакета указываем настраиваемый конфигурационный файл Nginx из папки /tmp.
