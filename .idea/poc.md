@@ -160,13 +160,13 @@ println(result)
 
 ![img_1222.png](photos%2Fimg_1222.png)
 
-**2. Из-за появления исключения в примере-2, корректность работы скрипта-2 проверить невозможно.**
+**2. Из-за появления исключения в примере-1, корректность работы скрипта-2 проверить невозможно.**
 
 Листинг программ:
 
 1. Скрипт на Bash:
 
-
+https://github.com/Ossowitz/Case4/blob/master/.idea/script2.sh
 
 ```bash
 #!/bin/bash
@@ -182,9 +182,9 @@ sudo systemctl restart nginx.service
 
 Этот скрипт обновляет список пакетов, устанавливает nginx и копирует конфигурационный файл из `/tmp/nginx.conf` в `/etc/nginx/nginx.conf`. Затем он перезапускает службу nginx, чтобы применить изменения.
 
-2. Скрипт на Groovy:
+2. Скрипт, написанный на Groovy:
 
-
+https://github.com/Ossowitz/Case4/blob/master/.idea/script2.groovy
 
 ```groovy
 import org.yaml.snakeyaml.Yaml
@@ -214,3 +214,55 @@ minions.each { minion ->
 ```
 
 В данном примере мы используем библиотеку Salt, чтобы выполнять команды на minion через master. Сначала мы получаем список minion с помощью команды `test.ping`. Затем мы формируем параметры для установки Nginx в виде YAML-структуры и передаем их в команду `pkg.install`. В качестве источника пакета указываем настраиваемый конфигурационный файл Nginx из папки /tmp.
+
+**Из-за появления исключения в примере-1, корректность работы скрипта-3 проверить невозможно.**
+
+Листинг программ:
+
+1. Скрипт на Bash:
+
+
+
+```bash
+#!/bin/bash
+salt 'key-2' cmd.run 'echo "Hello Greenatom" > /tmp/index.html' # key_2 - это имя minion
+salt 'key_2' cmd.run 'sudo cp /tmp/index.html /var/www/html' # key_2 - это имя minion
+salt 'key_2' cmd.run 'sudo systemctl restart nginx' # key_2 - это имя minion
+```
+
+2. Скрипт на Groovy:
+
+
+
+Для выполнения данной задачи в Saltstack можно использовать Groovy и модуль `salt.modules.file` для работы с файлами на удаленных узлах. Вот пример скрипта:
+
+```groovy
+import salt.modules.file
+
+String minionId = 'webserver'
+String file = '/usr/share/nginx/html/index.html'
+String content = '<html><body>Hello Greenatom</body></html>'
+
+// Проверяем, что файл существует на удаленном узле
+if (salt.modules.file.file_exists(minionId, file)) {
+    // Заменяем содержимое файла на строку "Hello Greenatom"
+    salt.modules.file.replace(minionId, file, content)
+} else {
+    println("Файл $file не найден на $minionId")
+}
+```
+
+В данном скрипте мы указываем id узла-миниона `webserver`, на котором нужно заменить содержимое файла `'/usr/share/nginx/html/index.html'`. Если файл существует, то заменяем его содержимое на указанную строку. Если файла не существует, то выводим сообщение об ошибке.
+
+Для запуска скрипта в Saltstack мы можем использовать модуль `salt.modules.cmd`, например так:
+
+```groovy
+import salt.modules.cmd
+
+String command = 'groovy /path/to/script.groovy'
+String output = salt.modules.cmd.run(command)
+
+println(output)
+```
+
+Здесь мы запускаем скрипт `/path/to/script.groovy` на Saltstack master и получаем результат выполнения через модуль `salt.modules.cmd`.
