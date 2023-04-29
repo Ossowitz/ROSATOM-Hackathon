@@ -112,6 +112,8 @@ sudo apt install nginx
 
 1. Вариант Bash-скрипта:
 
+https://github.com/Ossowitz/Case4/blob/master/.idea/script.sh
+
 ```bash
 #!/bin/bash
 
@@ -127,6 +129,8 @@ salt "$minion_id" cp.push "$file_path" "$dest_path/"
 Команда `cp.push` передает файл с мастер-ноды на заданный миньон. Она принимает два параметра: путь к файлу на мастер-ноде и путь к папке на миньоне, куда нужно передать файл. В данном случае файл передается из папки `/etc/nginx` на мастер-ноде в папку `/tmp` на миньоне.
 
 2. Вариант Groovy-скрипта:
+
+https://github.com/Ossowitz/Case4/blob/master/.idea/script.groovy
 
 ```groovy
 import org.yaml.snakeyaml.Yaml   // импортируем библиотеку для чтения YAML-файлов
@@ -147,4 +151,12 @@ ${minion}:
 def result = sh "salt ${minion} state.apply ${data}"
 println(result)
 ```
+
+**Однако, при попытке отправки дистрибутива, master выдаёт исключение:**
+
+![img.png](img.png)
+
+**Хотя minion работает и опция принятия файлов включена:**
+
+![img_1.png](img_1.png)
 
