@@ -1,4 +1,4 @@
-import org.yaml.snakeyaml.Yaml   // импортируем библиотеку для чтения YAML-файлов
+import org.yaml.snakeyaml.Yaml // импортируем библиотеку для чтения YAML-файлов
 
 def minion = 'minion-name'   // имя minion, на который нужно передать файл
 def source = '/path/to/nginx.tar.gz'   // путь к дистрибутиву nginx на master
