@@ -221,7 +221,7 @@ minions.each { minion ->
 
 1. Скрипт на Bash:
 
-
+https://github.com/Ossowitz/Case4/blob/master/.idea/script3.sh
 
 ```bash
 #!/bin/bash
@@ -232,7 +232,8 @@ salt 'key_2' cmd.run 'sudo systemctl restart nginx' # key_2 - это имя mini
 
 2. Скрипт на Groovy:
 
-
+https://github.com/Ossowitz/Case4/blob/master/.idea/script3-1.groovy
+https://github.com/Ossowitz/Case4/blob/master/.idea/script3-2.groovy
 
 Для выполнения данной задачи в Saltstack можно использовать Groovy и модуль `salt.modules.file` для работы с файлами на удаленных узлах. Вот пример скрипта:
 
