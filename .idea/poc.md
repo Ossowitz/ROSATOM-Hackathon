@@ -154,9 +154,9 @@ println(result)
 
 **Однако, при попытке отправки дистрибутива, master выдаёт исключение:**
 
-![img.png](img.png)
+![img111.png](photos%2Fimg111.png)
 
 **Хотя minion работает и опция принятия файлов включена:**
 
-![img_1.png](img_1.png)
+![img_1222.png](photos%2Fimg_1222.png)
 
