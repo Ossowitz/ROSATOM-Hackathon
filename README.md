@@ -1,16 +1,8 @@
-![main.png](src%2Fmain%2Fresources%2Fphotos%2Fmain.png)
-
-<br/>
-
-### • Написать скрипт для Saltstack передачи файла дистрибутива nginx в папку /tmp на ВМ01 средствами Saltstack;
-### • Написать скрипт для Saltstack, который даёт команду на ВМ01 по установке nginx из папки /tmp в ОС Astra Linux;
-### • Написать скрипт для Saltstack, который подменяет текст тестовой веб-страницы index.html у nginx на строку “Hello Greenatom”.
-
-<br/>
+![img.png](main.png)
 
 ### Подготовка стенда
 
-**1. Была установлена ОС Astra Linux. Системе было присвоено имя «VM01». Далее были произведены настройки сети: осуществление подключения к внешней сети через соединение с NAT.**
+**1. Была установлена OS Astra Linux. Системе было присвоено имя «VM01». Далее были произведены настройки сети: осуществление подключения к внешней сети через соединение с NAT.**
 
 ![img_5.png](src%2Fmain%2Fresources%2Fphotos%2Fimg_5.png)
 
@@ -35,7 +27,7 @@ nm-connection-editor # Открытие настроек сетевого под
 
 ![img_7.png](src%2Fmain%2Fresources%2Fphotos%2Fimg_7.png)
 
-**3. На второй виртуальной машине (которой было присвоено имя «VM02»), было установлено средство управления Saltstack master:**
+**3. На второй виртуальной машине (которой было присвоено имя «VM02»), было установлено средство управления SaltStack master:**
 
 Bash-скрипт:
 
@@ -84,7 +76,7 @@ vi tikhomirov.conf
 
 # Записываем в файл .conf
 master: 192.168.0.155 # 192.168.0.155 - IP-адрес master'а
-master_port: 4506 # 4506 - это тот порт, по которому мастер отдаёт команды для minion's
+master_port: 4506     # 4506 - это тот порт, по которому мастер отдаёт команды для minion's
 ```
 
 После того как были установлены и настроены мастер и миньоны Salt, они были запущены:
@@ -107,7 +99,7 @@ systemctl start salt-minion
 
 Salt Master (Мастер) – это сервер, который выступает в качестве центра управления для своих миньонов, именно от Master отправляются запросы на удаленное выполнение команд.
 
-**В папку системы с Saltstack master был установлен дистрибутив ngnix.**
+**В папку системы с SaltStack master был установлен дистрибутив nginx.**
 
 ```bash
 sudo apt install nginx
@@ -115,14 +107,11 @@ sudo apt install nginx
 
 ![img_9.png](src%2Fmain%2Fresources%2Fphotos%2Fimg_9.png)
 
-## 1. Далее был написан скрипт для Saltstack передачи файла дистрибутива nginx в папку /tmp на ВМ01
-средствами Saltstack.
+## 1. Далее был написан скрипт для SaltStack передачи файла дистрибутива nginx в папку /tmp на ВМ01 средствами SaltStack.
 
 Листинг программ:
 
 1. Вариант Bash-скрипта:
-
-https://github.com/Ossowitz/Case4/blob/master/.idea/script.sh
 
 ```bash
 #!/bin/bash
@@ -140,14 +129,12 @@ salt "$minion_id" cp.push "$file_path" "$dest_path/"
 
 2. Вариант Groovy-скрипта:
 
-https://github.com/Ossowitz/Case4/blob/master/.idea/script.groovy
-
 ```groovy
-import org.yaml.snakeyaml.Yaml   // импортируем библиотеку для чтения YAML-файлов
+import org.yaml.snakeyaml.Yaml          // импортируем библиотеку для чтения YAML-файлов
 
-def minion = 'minion-name'   // имя minion, на который нужно передать файл
-def source = '/path/to/nginx.tar.gz'   // путь к дистрибутиву nginx на master
-def target = '/tmp/nginx.tar.gz'   // путь, по которому нужно разместить дистрибутив на minion
+def minion = 'minion-name'              // имя minion, на который нужно передать файл
+def source = '/path/to/nginx.tar.gz'    // путь к дистрибутиву nginx на master
+def target = '/tmp/nginx.tar.gz'        // путь, по которому нужно разместить дистрибутив на minion
 
 // генерируем YAML-файл для передачи данных
 def data = """
@@ -170,13 +157,9 @@ println(result)
 
 ![img_1222.png](src%2Fmain%2Fresources%2Fphotos%2Fimg_1222.png)
 
-## 2. Из-за появления исключения в примере-1, корректность работы скрипта-2 проверить невозможно.
-
 Листинг программ:
 
 1. Скрипт на Bash:
-
-https://github.com/Ossowitz/Case4/blob/master/.idea/script2.sh
 
 ```bash
 #!/bin/bash
@@ -193,8 +176,6 @@ sudo systemctl restart nginx.service
 Этот скрипт обновляет список пакетов, устанавливает nginx и копирует конфигурационный файл из `/tmp/nginx.conf` в `/etc/nginx/nginx.conf`. Затем он перезапускает службу nginx, чтобы применить изменения.
 
 2. Скрипт, написанный на Groovy:
-
-https://github.com/Ossowitz/Case4/blob/master/.idea/script2.groovy
 
 ```groovy
 import org.yaml.snakeyaml.Yaml
@@ -225,8 +206,6 @@ minions.each { minion ->
 
 В данном примере мы используем библиотеку Salt, чтобы выполнять команды на minion через master. Сначала мы получаем список minion с помощью команды `test.ping`. Затем мы формируем параметры для установки Nginx в виде YAML-структуры и передаем их в команду `pkg.install`. В качестве источника пакета указываем настраиваемый конфигурационный файл Nginx из папки /tmp.
 
-## Из-за появления исключения в примере-1, корректность работы скрипта-3 проверить невозможно.
-
 Листинг программ:
 
 1. Скрипт на Bash:
@@ -235,28 +214,25 @@ https://github.com/Ossowitz/Case4/blob/master/.idea/script3.sh
 
 ```bash
 #!/bin/bash
-salt 'key-2' cmd.run 'echo "Hello Greenatom" > /tmp/index.html' # key_2 - это имя minion
+salt 'key-2' cmd.run 'echo "Hello Rosatom" > /tmp/index.html' # key_2 - это имя minion
 salt 'key_2' cmd.run 'sudo cp /tmp/index.html /var/www/html' # key_2 - это имя minion
 salt 'key_2' cmd.run 'sudo systemctl restart nginx' # key_2 - это имя minion
 ```
 
 2. Скрипт на Groovy:
 
-https://github.com/Ossowitz/Case4/blob/master/.idea/script3-1.groovy
-https://github.com/Ossowitz/Case4/blob/master/.idea/script3-2.groovy
-
-Для выполнения данной задачи в Saltstack можно использовать Groovy и модуль `salt.modules.file` для работы с файлами на удаленных узлах. Вот пример скрипта:
+Для выполнения данной задачи в SaltStack можно использовать Groovy и модуль `salt.modules.file` для работы с файлами на удаленных узлах. Вот пример скрипта:
 
 ```groovy
 import salt.modules.file
 
 String minionId = 'webserver'
 String file = '/usr/share/nginx/html/index.html'
-String content = '<html><body>Hello Greenatom</body></html>'
+String content = '<html><body>Hello Rosatom</body></html>'
 
 // Проверяем, что файл существует на удаленном узле
 if (salt.modules.file.file_exists(minionId, file)) {
-    // Заменяем содержимое файла на строку "Hello Greenatom"
+    // Заменяем содержимое файла на строку "Hello Rosatom"
     salt.modules.file.replace(minionId, file, content)
 } else {
     println("Файл $file не найден на $minionId")
@@ -265,7 +241,7 @@ if (salt.modules.file.file_exists(minionId, file)) {
 
 В данном скрипте мы указываем id узла-миниона `webserver`, на котором нужно заменить содержимое файла `'/usr/share/nginx/html/index.html'`. Если файл существует, то заменяем его содержимое на указанную строку. Если файла не существует, то выводим сообщение об ошибке.
 
-Для запуска скрипта в Saltstack мы можем использовать модуль `salt.modules.cmd`, например так:
+Для запуска скрипта в SaltStack мы можем использовать модуль `salt.modules.cmd`, например так:
 
 ```groovy
 import salt.modules.cmd
@@ -276,4 +252,4 @@ String output = salt.modules.cmd.run(command)
 println(output)
 ```
 
-Здесь мы запускаем скрипт `/path/to/script.groovy` на Saltstack master и получаем результат выполнения через модуль `salt.modules.cmd`.
+Здесь мы запускаем скрипт `/path/to/script.groovy` на SaltStack master и получаем результат выполнения через модуль `salt.modules.cmd`.
